@@ -21,10 +21,22 @@ public class Observers {
 
     public static class PartySupport implements GameObserver {
         private final List<Hero> party;
+        private final Random random = new Random();
+
         public PartySupport(List<Hero> party) { this.party = party; }
+
         public void onEvent(GameEvent e) {
             if (e.getType() == GameEventType.HERO_LOW_HP) {
-                for (Hero h : party) if (h.isAlive()) { h.heal(25); break; }
+                List<Hero> alive = new ArrayList<>();
+                for (Hero h : party) {
+                    if (h.isAlive()) alive.add(h);
+                }
+
+                if (!alive.isEmpty()) {
+                    Hero target = alive.get(random.nextInt(alive.size()));
+                    target.heal(25);
+                }
+
                 System.out.println("[SUPPORT] PARTY HEALED!");
             }
         }
